@@ -81,17 +81,27 @@ function setupVlDrop(dropEl, inputEl, side) {
 setupVlDrop(vlDropA, vlInputA, 'A');
 setupVlDrop(vlDropB, vlInputB, 'B');
 
-// ─── Excel ファイル読み込み ────────────────────────────────
+// ─── ファイル読み込み（Excel / CSV 共通） ────────────────────
 async function loadVlFile(file, side) {
-  if (!/\.(xlsx|xls)$/i.test(file.name)) {
-    alert('Excelファイル（.xlsx/.xls）を選択してください。');
+  const isExcel = /\.(xlsx|xls)$/i.test(file.name);
+  const isCsv   = /\.csv$/i.test(file.name);
+  if (!isExcel && !isCsv) {
+    alert('Excel（.xlsx/.xls）またはCSV（.csv）ファイルを選択してください。');
     return;
   }
   try {
-    const buf = await file.arrayBuffer();
-    const wb  = XLSX.read(buf, { type: 'array', cellText: true, cellDates: true, raw: false });
-    const ws  = wb.Sheets[wb.SheetNames[0]];
-    const data = parseSheetToTable(ws);
+    let data;
+    if (isCsv) {
+      // CSV → ヘッダー1行目を列名として扱う
+      const text = await file.text();
+      data = parseCsvToTable(text);
+    } else {
+      // Excel
+      const buf = await file.arrayBuffer();
+      const wb  = XLSX.read(buf, { type: 'array', cellText: true, cellDates: true, raw: false });
+      const ws  = wb.Sheets[wb.SheetNames[0]];
+      data = parseSheetToTable(ws);
+    }
     data.fileName = file.name;
     data.baseName = stripExt(file.name);
 
@@ -111,6 +121,39 @@ async function loadVlFile(file, side) {
   } catch (e) {
     alert('ファイルの読み込みに失敗しました: ' + e.message);
   }
+}
+
+/**
+ * CSVテキストをヘッダー+行のテーブル形式に変換する（RFC 4180準拠）
+ * @param {string} text
+ * @returns {{ headers: string[], rows: string[][] }}
+ */
+function parseCsvToTable(text) {
+  const allRows = [];
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    if (line.trim() === '') continue;
+    const cols = [];
+    let cur = '';
+    let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inQ) {
+        if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+        else if (ch === '"') { inQ = false; }
+        else { cur += ch; }
+      } else {
+        if (ch === '"') { inQ = true; }
+        else if (ch === ',') { cols.push(cur); cur = ''; }
+        else { cur += ch; }
+      }
+    }
+    cols.push(cur);
+    allRows.push(cols);
+  }
+  const headers = allRows.length > 0 ? allRows[0] : [];
+  const rows    = allRows.slice(1);
+  return { headers, rows };
 }
 
 // シートをテーブル形式に変換

@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const CACHE = 'vlookup-v1';
+const CACHE = 'vlookup-v2';
 const BASE = self.location.pathname.replace(/sw\.js$/, '');
 
 const PRECACHE_PATHS = [

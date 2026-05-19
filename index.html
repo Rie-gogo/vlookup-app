@@ -58,7 +58,7 @@
       </div>
 
       <p class="desc">
-        2つのExcelファイルを読み込み、<strong>キー列（例：社員番号・顧客ID）</strong>で照合して
+        Excel（.xlsx/.xls）またはCSVファイルを読み込み、<strong>キー列（例：社員番号・顧客ID）</strong>で照合して
         ①の列データを②に転記したCSVを出力します。Excelの VLOOKUP 関数と同じ仕組みです。
       </p>
 
@@ -78,7 +78,8 @@
             </svg>
             <p class="drop-text">ドロップ または クリック</p>
             <p class="drop-sub">住所・氏名などのマスタデータ</p>
-            <input type="file" id="vl-input-a" accept=".xlsx,.xls" class="visually-hidden" />
+            <p class="drop-sub" style="font-size:.72rem;color:#94a3b8">.xlsx / .xls / .csv</p>
+            <input type="file" id="vl-input-a" accept=".xlsx,.xls,.csv" class="visually-hidden" />
           </div>
           <div id="vl-file-a" class="file-info hidden"></div>
         </div>
@@ -105,7 +106,8 @@
             </svg>
             <p class="drop-text">ドロップ または クリック</p>
             <p class="drop-sub">転記先のデータ（空欄のある列）</p>
-            <input type="file" id="vl-input-b" accept=".xlsx,.xls" class="visually-hidden" />
+            <p class="drop-sub" style="font-size:.72rem;color:#94a3b8">.xlsx / .xls / .csv</p>
+            <input type="file" id="vl-input-b" accept=".xlsx,.xls,.csv" class="visually-hidden" />
           </div>
           <div id="vl-file-b" class="file-info hidden"></div>
         </div>
