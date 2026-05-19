@@ -165,10 +165,12 @@ body {
 }
 .map-icon { font-size: 1rem; }
 .map-selects {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; overflow: hidden;
 }
 .select-wrap {
-  display: flex; align-items: center; gap: 6px; flex: 1; min-width: 160px;
+  display: flex; align-items: center; gap: 6px;
+  flex: 1; min-width: 0; overflow: hidden;
 }
 .select-badge {
   display: inline-flex; align-items: center; justify-content: center;
@@ -180,9 +182,14 @@ body {
 .equal { font-size: 1.1rem; font-weight: 700; color: #94a3b8; }
 
 .vl-select {
-  flex: 1; padding: 7px 10px; border-radius: 8px;
+  flex: 1; min-width: 0; padding: 7px 10px; border-radius: 8px;
   border: 1px solid #cbd5e1; font-size: .82rem;
   background: #fff; color: #1e293b;
+  /* 長いテキストを省略して被りを防ぐ */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .vl-select:focus { outline: 2px solid #6366f1; border-color: #6366f1; }
 
